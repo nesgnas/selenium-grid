@@ -1,0 +1,55 @@
+services:
+  hub:
+    image: selenium/hub:latest
+    container_name: selenium-hub
+    ports:
+      - "4444:4444"
+    environment:
+      - SE_EVENT_BUS_PUBLISH_PORT=4442
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+      - OTEL_TRACES_EXPORTER=otlp
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
+
+
+  chrome:
+    image: selenium/node-chrome:latest
+#    container_name: selenium-node-chrome
+    depends_on:
+      - hub
+    environment:
+      - SE_EVENT_BUS_HOST=selenium-hub
+      - SE_EVENT_BUS_PUBLISH_PORT=4442
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+      - OTEL_TRACES_EXPORTER=otlp
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
+
+    expose:
+      - "5900"
+    deploy:
+      replicas: 3
+
+  firefox:
+    image: selenium/node-firefox:latest
+#    container_name: selenium-node-firefox
+    depends_on:
+      - hub
+    environment:
+      - SE_EVENT_BUS_HOST=selenium-hub
+      - SE_EVENT_BUS_PUBLISH_PORT=4442
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+      - OTEL_TRACES_EXPORTER=otlp
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
+
+    expose:
+      - "5900"
+    deploy:
+      replicas: 3
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:latest
+    container_name: otel-collector
+    ports:
+      - "4317:4317"  # gRPC for receiving traces from Selenium
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    command: ["--config=/etc/otel-collector-config.yaml"]

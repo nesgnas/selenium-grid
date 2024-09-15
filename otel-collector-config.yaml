@@ -1,0 +1,15 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:  # gRPC for receiving traces
+        endpoint: 0.0.0.0:4317
+
+exporters:
+  debug:  # Replace deprecated logging exporter with debug exporter
+    verbosity: 1  # Equivalent to "debug" level verbosity
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      exporters: [debug]  # Use the new debug exporter

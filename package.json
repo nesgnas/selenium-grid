@@ -1,0 +1,15 @@
+{
+  "name": "selenium-grid",
+  "version": "1.0.0",
+  "description": "",
+  "main": "test_selenium_grid.js",
+  "dependencies": {
+    "selenium-webdriver": "^4.24.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "node test_selenium_grid.js"
+  },
+  "author": "",
+  "license": "ISC"
+}
