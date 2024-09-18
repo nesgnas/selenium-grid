@@ -28,6 +28,12 @@ FIREFOX_VNC_PORT_3=5905
 SELENIUM_URL=http://171.233.47.253:8089
 
 ```
+I
+
+RUN COMMAND
+``
+npm install
+``
 
 RUN COMMAND
 ``
