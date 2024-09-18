@@ -4,7 +4,7 @@ import axios from "axios";
 // Fetches the list of nodes and tries to match the session ID to the node executing the test
 async function getNodeInfo(sessionId: string): Promise<string> {
     try {
-        const response = await axios.get('http://localhost:4444/status');  // Adjust for your grid's status endpoint
+        const response = await axios.get('http://171.233.47.253:8089/status');  // Adjust for your grid's status endpoint
         const nodes = response.data.value.nodes;
 
         for (const node of nodes) {

@@ -1,24 +1,35 @@
 # selenium-grid
 
 ```dotenv
-# .env
-
 # Selenium Grid Hub URLs and Ports
-HUB_URL=http://localhost:4444/wd/hub
+HUB_URL=http://171.233.47.253:8089/wd/hub
 OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
 
 # Event Bus Ports
 SE_EVENT_BUS_PUBLISH_PORT=4442
 SE_EVENT_BUS_SUBSCRIBE_PORT=4443
 
-# Exposed Ports for Chrome and Firefox Nodes
-CHROME_VNC_PORT=5900
-FIREFOX_VNC_PORT=5901
-
 # OpenTelemetry settings
 OTEL_TRACES_EXPORTER=otlp
 
+# Number of Nodes
 CHROME_NODES=3
 FIREFOX_NODES=3
 
+# Node-specific VNC Ports
+CHROME_VNC_PORT_1=5900
+CHROME_VNC_PORT_2=5901
+CHROME_VNC_PORT_3=5902
+
+FIREFOX_VNC_PORT_1=5903
+FIREFOX_VNC_PORT_2=5904
+FIREFOX_VNC_PORT_3=5905
+
+SELENIUM_URL=http://171.233.47.253:8089
+
 ```
+
+RUN COMMAND
+``
+ts-node index.ts
+``

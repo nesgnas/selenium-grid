@@ -1,19 +1,20 @@
+version: '3'
+
 services:
   hub:
     image: selenium/hub:latest
     container_name: selenium-hub
     ports:
-      - "4444:4444"
+      - "8080:4444"  # Selenium Hub accessible at port 8080
     environment:
       - SE_EVENT_BUS_PUBLISH_PORT=${SE_EVENT_BUS_PUBLISH_PORT}
       - SE_EVENT_BUS_SUBSCRIBE_PORT=${SE_EVENT_BUS_SUBSCRIBE_PORT}
       - OTEL_TRACES_EXPORTER=${OTEL_TRACES_EXPORTER}
       - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}
 
-
-  chrome:
+  # Chrome Node 1
+  chrome_1:
     image: selenium/node-chrome:latest
-#    container_name: selenium-node-chrome
     depends_on:
       - hub
     environment:
@@ -22,15 +23,46 @@ services:
       - SE_EVENT_BUS_SUBSCRIBE_PORT=${SE_EVENT_BUS_SUBSCRIBE_PORT}
       - OTEL_TRACES_EXPORTER=${OTEL_TRACES_EXPORTER}
       - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}
-
     expose:
-      - "${CHROME_VNC_PORT}"
-    deploy:
-      replicas: ${CHROME_NODES}
+      - "${CHROME_VNC_PORT_1}"
+    ports:
+      - "8081:${CHROME_VNC_PORT_1}"  # Chrome Node 1 VNC access on 8081
 
-  firefox:
+  # Chrome Node 2
+  chrome_2:
+    image: selenium/node-chrome:latest
+    depends_on:
+      - hub
+    environment:
+      - SE_EVENT_BUS_HOST=selenium-hub
+      - SE_EVENT_BUS_PUBLISH_PORT=${SE_EVENT_BUS_PUBLISH_PORT}
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=${SE_EVENT_BUS_SUBSCRIBE_PORT}
+      - OTEL_TRACES_EXPORTER=${OTEL_TRACES_EXPORTER}
+      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}
+    expose:
+      - "${CHROME_VNC_PORT_2}"
+    ports:
+      - "8082:${CHROME_VNC_PORT_2}"  # Chrome Node 2 VNC access on 8082
+
+  # Chrome Node 3
+  chrome_3:
+    image: selenium/node-chrome:latest
+    depends_on:
+      - hub
+    environment:
+      - SE_EVENT_BUS_HOST=selenium-hub
+      - SE_EVENT_BUS_PUBLISH_PORT=${SE_EVENT_BUS_PUBLISH_PORT}
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=${SE_EVENT_BUS_SUBSCRIBE_PORT}
+      - OTEL_TRACES_EXPORTER=${OTEL_TRACES_EXPORTER}
+      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}
+    expose:
+      - "${CHROME_VNC_PORT_3}"
+    ports:
+      - "8083:${CHROME_VNC_PORT_3}"  # Chrome Node 3 VNC access on 8083
+
+  # Firefox Node 1
+  firefox_1:
     image: selenium/node-firefox:latest
-#    container_name: selenium-node-firefox
     depends_on:
       - hub
     environment:
@@ -39,17 +71,48 @@ services:
       - SE_EVENT_BUS_SUBSCRIBE_PORT=${SE_EVENT_BUS_SUBSCRIBE_PORT}
       - OTEL_TRACES_EXPORTER=${OTEL_TRACES_EXPORTER}
       - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}
-
     expose:
-      - "${FIREFOX_VNC_PORT}"
-    deploy:
-      replicas: ${FIREFOX_NODES}
+      - "${FIREFOX_VNC_PORT_1}"
+    ports:
+      - "8084:${FIREFOX_VNC_PORT_1}"  # Firefox Node 1 VNC access on 8084
+
+  # Firefox Node 2
+  firefox_2:
+    image: selenium/node-firefox:latest
+    depends_on:
+      - hub
+    environment:
+      - SE_EVENT_BUS_HOST=selenium-hub
+      - SE_EVENT_BUS_PUBLISH_PORT=${SE_EVENT_BUS_PUBLISH_PORT}
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=${SE_EVENT_BUS_SUBSCRIBE_PORT}
+      - OTEL_TRACES_EXPORTER=${OTEL_TRACES_EXPORTER}
+      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}
+    expose:
+      - "${FIREFOX_VNC_PORT_2}"
+    ports:
+      - "8085:${FIREFOX_VNC_PORT_2}"  # Firefox Node 2 VNC access on 8085
+
+  # Firefox Node 3
+  firefox_3:
+    image: selenium/node-firefox:latest
+    depends_on:
+      - hub
+    environment:
+      - SE_EVENT_BUS_HOST=selenium-hub
+      - SE_EVENT_BUS_PUBLISH_PORT=${SE_EVENT_BUS_PUBLISH_PORT}
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=${SE_EVENT_BUS_SUBSCRIBE_PORT}
+      - OTEL_TRACES_EXPORTER=${OTEL_TRACES_EXPORTER}
+      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}
+    expose:
+      - "${FIREFOX_VNC_PORT_3}"
+    ports:
+      - "8086:${FIREFOX_VNC_PORT_3}"  # Firefox Node 3 VNC access on 8086
 
   otel-collector:
     image: otel/opentelemetry-collector-contrib:latest
     container_name: otel-collector
     ports:
-      - "4317:4317"  # gRPC for receiving traces from Selenium
+      - "8087:4317"  # Changed to use port 8087 for OTEL
     volumes:
       - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
     command: ["--config=/etc/otel-collector-config.yaml"]
